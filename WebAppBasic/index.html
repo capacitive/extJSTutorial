@@ -6,71 +6,36 @@
     <script src="http://cdn.sencha.com/ext/gpl/4.2.1/ext-all.js"></script>
 
     <script type="text/javascript">
-        //component creation the long way (1):
-        var component1 = Ext.create('Ext.Component', {
-            html: 'First ExtJS app!'
-        });
 
-        //basic extJS app setup:
-        Ext.application({
-            name: 'App1',
-            launch: function () {
-                Ext.create('Ext.container.Viewport', {
-                    items: [
-                        {
-                            xtype: 'button',
-                            text: 'Disable',
-                            handler: function () {
-                                this.up().down("#panel1").disable();
-                            }
-                        },
-                        {
-                            xtype: 'button',
-                            text: 'Enable',
-                            handler: function () {
-                                this.up().down("#panel1").enable();
-                            }
-                        },
-                        {
-                            xtype: 'button',
-                            text: 'Hide',
-                            handler: function () {
-                                this.up().down("#panel1").hide();
-                            }
-                        },
-                        {
-                            xtype: 'button',
-                            text: 'Show',
-                            handler: function () {
-                                this.up().down("#panel1").show();
-                            }
-                        },
-                        {                          
-                            tpl: 'name: {first} {last}',
-                            data: {
-                                first: 'Jordan',
-                                last: 'Cafazzo'
-                            },
-                            padding: 20,
-                            width: 200,
-                            height: 200,
-                            style: {
-                                border: '2px solid red'
-                            },
-                            resizable: true,
-                            itemId: "panel1",
-                            listener: {
-                                resize: {
-                                    fn: function(component, width, height) {
-                                        console.log("w/h: " + width + " " + height);
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                });
+        Ext.define("SessionModel", {
+            extend: "Ext.data.Model",
+            fields: [
+                { name: 'id', type: 'int' },
+                { name: 'number', type: 'int' },
+                { name: 'routeId', type: 'int' },
+                { name: 'tagType', type: 'int' }
+            ],
+
+            //simple GET POST PUT
+            proxy: {
+                type: 'rest',
+                url: 'http://localhost/tmmc.agv/api/agvroutes/4/tags',
+                reader: {
+                    type: 'json'
+                }
             }
         });
+
+        var sessionGet = Ext.ModelManager.getModel('SessionModel');
+
+        // api/agvroutes/1
+
+        sessionGet.load({
+            success: function(session) {
+                console.log(session.getData());
+            }
+        });
+
     </script>
 </head>
 <body>

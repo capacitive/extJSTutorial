@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link href="http://cdn.sencha.com/ext/gpl/4.2.1/resources/css/ext-all-neptune.css" rel="stylesheet" />
+    <script src="http://cdn.sencha.com/ext/gpl/4.2.1/ext-all.js"></script>
+
+    <script type="text/javascript">
+
+        Ext.define("SessionModel", {
+            extend: "Ext.data.Model",
+            field: [
+                { name: 'id', type: 'int' },
+                { name: 'title', type: 'string' },
+                { name: 'sessionLevel', type: 'int' },
+                { name: 'approved', type: 'bool', defaultValue: false }
+            ],
+
+            validations: [
+                { type: 'length', field: 'title', min: 8 },
+                { type: 'inclusion', field: 'sessionLevel', list: [1, 2, 3] }
+            ]
+        });
+
+        var session1 = Ext.create("SessionModel", {
+            title: 'C++',
+            sessionLevel: 1
+        });
+
+        //debugger;
+        if (!session1.isValid()) {
+            var errors = session1.validate();
+            errors.each(function(rec) {
+                console.log(rec);
+            });
+        } else {
+            //debugger;
+        }
+
+        var session2 = Ext.create("SessionModel", {
+            title: 'C#',
+            sessionLevel: 2
+        });
+
+        //debugger;
+        if (!session2.isValid()) {
+            var errors = session1.validate();
+            errors.each(function (rec) {
+                console.log(rec);
+            });
+        } else {
+            //debugger;
+        }
+
+        var session3 = Ext.create("SessionModel", {
+            title: 'CLR',
+            sessionLevel: 3
+        });
+
+        //debugger;
+        if (!session3.isValid()) {
+            var errors = session1.validate();
+            errors.each(function (rec) {
+                console.log(rec);
+            });
+        } else {
+            //debugger;
+        }
+
+        var session4 = Ext.create("SessionModel", {
+            title: 'Parallel Computing',
+            sessionLevel: 3
+        });
+
+        //debugger;
+        if (!session4.isValid()) {
+            var errors = session1.validate();
+            errors.each(function (rec) {
+                console.log(rec);
+            });
+        } else {
+            //debugger;
+        }
+    </script>
+</head>
+<body>
+
+</body>
+</html>
