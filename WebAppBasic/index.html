@@ -1,41 +1,158 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title></title>
-    <link href="http://cdn.sencha.com/ext/gpl/4.2.1/resources/css/ext-all.css" rel="stylesheet" />
+    <title>AGV SCADA PLC Configuration</title>
+    <link href="http://cdn.sencha.com/ext/gpl/4.2.1/resources/css/ext-all-neptune.css" rel="stylesheet" />
     <script src="http://cdn.sencha.com/ext/gpl/4.2.1/ext-all.js"></script>
 
     <script type="text/javascript">
+        
+        Ext.application({
+            name: 'tmmc.agv.scada.ui',
+            launch: function() {
 
-        Ext.define("SessionModel", {
-            extend: "Ext.data.Model",
-            fields: [
-                { name: 'id', type: 'int' },
-                { name: 'number', type: 'int' },
-                { name: 'routeId', type: 'int' },
-                { name: 'tagType', type: 'int' }
-            ],
+                Ext.define("PLCGridPanel", {
+                    extend: 'Ext.grid.Panel',
+                    alias: 'widget.plcgrid',
+                    store: {
+                        fields: ['id',
+                            {
+                                name: 'ipAddress',
+                                sortType: 'asUCText'
+                            },
+                            'port',
+                            'description'
+                        ],
+                        autoLoad: true,
+                        autoSync: true,
+                        proxy: {
+                            type: 'rest',
+                            url: 'http://localhost/tmmc.agv/api/plc',
+                            reader: {
+                                type: 'json',
+                                root: 'data'
+                            }
+                        },
+                        sorters: [
+                            { property: 'name' }
+                        ],
+                        groupField: 'zoneType'
+                    },
+                    columns: [
+                        {
+                            xtype: 'gridcolumn',
+                            text: 'IPAddress',
+                            dataIndex: 'ipAddress',
+                            flex: 1
+                        },
+                        {
+                            xtype: 'gridcolumn',
+                            text: 'Port',
+                            dataIndex: 'port'
+                        },
+                        {
+                            xtype: 'gridcolumn',
+                            text: 'Description',
+                            dataIndex: 'description'
+                        }
+                    ]
+                });
 
-            //simple GET POST PUT
-            proxy: {
-                type: 'rest',
-                url: 'http://localhost/tmmc.agv/api/agvroutes/4/tags',
-                reader: {
-                    type: 'json'
-                }
+                var zoneList = Ext.create('Ext.grid.Panel', {
+                    store: {
+                        fields: ['id',
+                            {
+                                name: 'name',
+                                sortType: 'asUCText'
+                            },
+                            'zoneType',
+                            'enabled',
+                            'description',
+                            'intersectionTags'],
+                        autoLoad: true,
+                        autoSync: true,
+                        proxy: {
+                            type: 'rest',
+                            url: 'http://localhost/tmmc.agv/api/zone?includeTags=true',
+                            reader: {
+                                type: 'json',
+                                root: 'data'
+                            }
+                        },
+                        sorters: [
+                            { property: 'name'}            
+                        ],
+                        groupField: 'zoneType'
+                    },
+                    columns: [
+                        {
+                            xtype: 'gridcolumn',
+                            text: 'Zone',
+                            dataIndex: 'name',
+                            flex: 1
+                        },
+                        {
+                            xtype: 'gridcolumn',
+                            text: 'Type',
+                            dataIndex: 'zoneType'
+                        },
+                        {
+                            xtype: 'gridcolumn',
+                            text: 'Active',
+                            dataIndex: 'enabled'
+                        },
+                        {
+                            xtype: 'gridcolumn',
+                            text: 'Intersections',
+                            dataIndex: 'intersectionTags',
+                            flex: 1
+                        }
+                    ]
+                });      
+
+                Ext.create('Ext.container.Viewport', {
+                    layout: 'border',
+                    bodyBorder: false,
+                    defaults: {
+                        collapsible: true,
+                        split: true,
+                        bodyPadding: 0
+                    },
+                    items:[
+                        {
+                            xtype: 'panel',
+                            collapsible: false,
+                            width: 8000,
+                            minWidth: 1000,
+                            margins: '5 0 0 0',
+                            title: 'Route Traffic',
+                            region: 'west'
+                        },
+                        {
+                            xtype: 'panel',
+                            width: 800,
+                            minWidth: 400,
+                            maxWidth: 800,
+                            margins: '5 0 0 0',
+                            title: 'Config',
+                            region: 'east',
+                            items: [PLCGridPanel]
+                        },
+                        {
+                            xtype: 'panel',
+                            height: 400,
+                            minHeight: 200,
+                            maxHeight: 1080,
+                            margins: '5 0 0 0',
+                            html: '<b>Zone Panel Content</b>',
+                            title: 'Global Traffic Conditions',
+                            region: 'south',
+                            items: [zoneList]
+                        }
+                    ]
+                });
             }
         });
-
-        var sessionGet = Ext.ModelManager.getModel('SessionModel');
-
-        // api/agvroutes/1
-
-        sessionGet.load({
-            success: function(session) {
-                console.log(session.getData());
-            }
-        });
-
     </script>
 </head>
 <body>

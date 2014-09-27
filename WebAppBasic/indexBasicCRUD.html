@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>AGV SCADA PLC Configuration</title>
+    <link href="http://cdn.sencha.com/ext/gpl/4.2.1/resources/css/ext-all-neptune.css" rel="stylesheet" />
+    <script src="http://cdn.sencha.com/ext/gpl/4.2.1/ext-all.js"></script>
+
+    <script type="text/javascript">
+        Ext.define("PLCModel", {
+            extend: "Ext.data.Model",
+            fields: [
+                { name: 'id', type: 'int' },
+                { name: 'IpAddress', type: 'string' },
+                { name: 'Port', type: 'int' },
+                { name: 'Description', type: 'string' }
+            ],
+
+            proxy: {
+                type: 'rest',
+                url: 'http://localhost/tmmc.agv/api/plc',
+                reader: {
+                    type: 'json'
+                }
+            }
+        });
+
+        var sessionGet = Ext.ModelManager.getModel('PLCModel');
+        sessionGet.load(13, {
+            success: function(session) {
+                console.log(session.getData());
+
+                session.destroy();
+            }
+        });
+
+        //var PLCSession = Ext.create("PLCModel", {
+        //    IpAddress: '192.168.1.244',
+        //    Port: 8888,
+        //    Description: 'ExtJS UI-created PLC'
+        //});
+
+        //PLCSession.save({
+        //    success: function(session) {
+        //        console.log(session.getData());
+
+        //        PLCSession.set('IpAddress', '192.168.1.255');
+
+        //        PLCSession.save({
+        //            success: function(session1) {
+        //                console.log(session1.getData());
+        //            }
+        //        });
+        //    }
+        //});
+    </script>
+</head>
+<body>
+
+</body>
+</html>
